@@ -1,0 +1,6 @@
+CHANGED,E:\MobileDevelopment\APP\LittleBlack\Application\build\intermediates\transforms\instantRun\debug\folders\4000\5\enhanced\com\example\android\littleblack\ImageAdapter$override.class
+CHANGED,E:\MobileDevelopment\APP\LittleBlack\Application\build\intermediates\transforms\instantRun\debug\folders\4000\5\enhanced\com\android\tools\fd\runtime\AppPatchesLoaderImpl.class
+CHANGED,E:\MobileDevelopment\APP\LittleBlack\Application\build\intermediates\transforms\instantRun\debug\folders\4000\5\enhanced\com\example\android\littleblack\ImageAdapter$ViewHolder$override.class
+CHANGED,E:\MobileDevelopment\APP\LittleBlack\Application\build\intermediates\transforms\instantRun\debug\folders\4000\5\enhanced\com\example\android\littleblack\PictureViewFragment$override.class
+CHANGED,E:\MobileDevelopment\APP\LittleBlack\Application\build\intermediates\transforms\instantRun\debug\folders\4000\5\enhanced\com\example\android\littleblack\CameraActivity$override.class
+CHANGED,E:\MobileDevelopment\APP\LittleBlack\Application\build\intermediates\transforms\instantRun\debug\folders\4000\5\enhanced\com\example\android\littleblack\ImageAdapter$1$override.class
