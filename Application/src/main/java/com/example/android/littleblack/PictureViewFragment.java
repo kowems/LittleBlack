@@ -61,8 +61,11 @@ public class PictureViewFragment extends Fragment {
     }
 
     private void loadPhotoPaths() {
+        String selection = MediaStore.Images.Media.DATA + " like ?";
+        String path = CameraFragment.PATH.replace("file:/","");
+        String[] selectionArgs = {path+"%"};
         // 查询数据库
-        Cursor cursor = getActivity().getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null, null, null, null);
+        Cursor cursor = getActivity().getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null, selection, selectionArgs, null);
         while (cursor.moveToNext()) {
             String file = cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.DATA));
             paths.add(file);
