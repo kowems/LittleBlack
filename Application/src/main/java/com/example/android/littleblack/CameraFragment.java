@@ -24,6 +24,7 @@ import android.app.DialogFragment;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -53,13 +54,16 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.TabHost;
 import android.widget.Toast;
 
 import com.example.android.camera2basic.R;
@@ -90,6 +94,8 @@ public class CameraFragment extends Fragment
     private static Button mCaptureBtn = null;
     private static Button mSwitchModeBtn = null;
     public static String PATH = "/storage/emulated/0/data";
+    // 滑动手势
+    private GestureDetector detector;
 
     static {
         ORIENTATIONS.append(Surface.ROTATION_0, 90);
@@ -438,12 +444,57 @@ public class CameraFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        //to-do
+        final GestureDetector mGestureDetector = new BuileGestureExt(getActivity(),new BuileGestureExt.OnGestureResult() {
+            @Override
+            public void onFilingResult(int direction) {
+                show(Integer.toString(direction));
+                switch (direction){
+                    case BuileGestureExt.GESTURE_UP:
+                    case BuileGestureExt.GESTURE_DOWN:
+                    case BuileGestureExt.GESTURE_RIGHT:
+                        break;
+                    case BuileGestureExt.GESTURE_LEFT:
+                                /* 新建一个Intent对象 */
+                        Intent intent = new Intent();
+                        /* 指定intent要启动的类 */
+                        intent.setClass(getActivity(), PictureViewActivity.class);
+                        /* 启动一个新的Activity */
+                        getActivity().startActivity(intent);
+                        /* 关闭当前的Activity */
+                        getActivity().finish();
+                        break;
+                    default:
+                        break;
+                }
+            }
+            @Override
+            public void onDownResult(){
+                takePicture();
+            }
+        }
+        ).Buile();
+        CameraActivity.OnTouchListener myOnTouchListener = new CameraActivity.OnTouchListener() {
+            @Override
+            public boolean onTouch(MotionEvent ev) {
+                boolean result = mGestureDetector.onTouchEvent(ev);
+                return result;
+            }
+        };
+
+        ((CameraActivity) getActivity())
+                .registerOnTouchListener(myOnTouchListener);
         return inflater.inflate(R.layout.fragment_camera2_basic, container, false);
+    }
+
+    private void show(String value){
+        Toast.makeText(getActivity(), value, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
         mCaptureBtn = (Button) view.findViewById(R.id.picture);
+        mCaptureBtn.setEnabled(false);
         mCaptureBtn.setOnClickListener(this);
         mSwitchModeBtn = (Button) view.findViewById(R.id.switchmode);
         mSwitchModeBtn.setOnClickListener(this);
@@ -786,6 +837,12 @@ public class CameraFragment extends Fragment
      * Initiate a still image capture.
      */
     private void takePicture() {
+        SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
+        Date curDate = new Date(System.currentTimeMillis());
+
+        //mFile = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), format.format(curDate)+".jpg");
+        mFile = new File(PATH, format.format(curDate)+".jpg");
+        Log.d("onClick",mFile.toString());
         lockFocus();
     }
 
@@ -913,12 +970,6 @@ public class CameraFragment extends Fragment
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.picture: {
-                SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
-                Date curDate = new Date(System.currentTimeMillis());
-
-                //mFile = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), format.format(curDate)+".jpg");
-                mFile = new File(PATH, format.format(curDate)+".jpg");
-                Log.d("onClick",mFile.toString());
                 takePicture();
                 break;
             }
@@ -934,7 +985,7 @@ public class CameraFragment extends Fragment
             }
             case R.id.switchmode:{
                 mCaptureBtn.setBackgroundColor(Color.BLACK);
-                mSwitchModeBtn.setEnabled(false);
+                mSwitchModeBtn.setVisibility(View.GONE);
 
                 WindowManager.LayoutParams lp = getActivity().getWindow().getAttributes();
                 lp.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE;
